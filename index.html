@@ -10,27 +10,7 @@
             width:100%;
             height: 100%
         }
-  .bg {
-    animation: colorChange 5s infinite;
-  }
 
-  @keyframes colorChange {
-    0% {
-      background-color: rgb(255, 50, 31); /* Tomato */
-    }
-    25% {
-      background-color: rgb(255, 165, 0); /* Orange */
-    }
-    50% {
-      background-color: rgb(0, 255, 0); /* Lime */
-    }
-    75% {
-      background-color: rgb(0, 191, 255); /* DeepSkyBlue */
-    }
-    100% {
-      background-color: rgb(255, 20, 147); /* DeepPink */
-    }
-  }
         body{
             background-color: black;
             transition: background-color 1s;
@@ -66,11 +46,8 @@
         .wrap img,.bubble img{
 
     position: relative;
-    height: 90px;
     filter: saturate(1.5) brightness(1.1);
-        }
-        .bubble img{
-    height: 140px;
+    transform: scale(0.5);
         }
         iframe{
             border: none;
@@ -89,9 +66,9 @@
     transition: 0.5s opacity;
      z-index: 100000;
 }
-.shine_1{background: linear-gradient(transparent 90%, #ffffff 100%)}
+/*.shine_1{background: linear-gradient(transparent 90%, #ffffff 100%)}
 .shine_2{background: linear-gradient(transparent 90%, #ffffff 100%)}
-.shine_3{background: linear-gradient(transparent 90%, #ffffff 100%)}
+.shine_3{background: linear-gradient(transparent 90%, #ffffff 100%)}*/
 .shine_on{
      opacity: 1; 
 }
@@ -107,19 +84,26 @@
             var popup_array = []
             const maxLaughs = 5; // Maximum allowed laugh instances
             const laughList = []; // Array to keep track of current laugh instances
-            const laughSound = 'laugh.wav'; // Path to the laugh sound file
-//             const options = "height=300,width=150,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,directories=no,status=no";
-// let cnt = 10; // for example
-
-// function popup() { 
-//  let w = window.open('test.html',"name"+cnt,options);
-//  if (!w) console.log("sorry, not allowed to pop");
-//  else { 
-//    cnt--;
-//    if (cnt>0) setTimeout(popup,1000); // pop the next
-//  }  
-// }
-// window.addEventListener("load",popup)
+            const laughSound = 'sound/05-k1-mp3_Comp_1.mp3'; // Path to the laugh sound file
+var soundarray = [
+['05-k1-mp3_Comp_1.mp3'],
+['04-h4-mp3_Comp_1.mp3',
+'04-h3-mp3_Comp_1.mp3',
+'04-h1-mp3_Comp_1.mp3'],
+['03-s5-mp3_Comp_1.mp3',
+'03-s4-mp3_Comp_1.mp3',
+'03-s3-mp3_Comp_1.mp3',
+'03-s2-mp3_Comp_1.mp3',
+'03-s1-mp3_Comp_1.mp3'],
+['02-e4-mp3_Comp_1.mp3',
+'02-e3-mp3_Comp_1.mp3',
+'02-e2-mp3_Comp_1.mp3',
+'02-e1-mp3_Comp_1.mp3'],
+['01-j5-mp3_Comp_1.mp3',
+'01-j4-mp3_Comp_1.mp3',
+'01-j3-mp3_Comp_1.mp3',
+'01-j2-mp3_Comp_1.mp3',
+'01-j1-mp3_Comp_1.mp3']]
 
 
 
@@ -156,11 +140,7 @@ function formatNumber(num) {
                             }
                         }
                         
-                        $("body").append('<div class="wrap keycode_'+keycode+' ah_'+(popup_array.length-1)+'"><img src="img/jewel/jewel-'+formatNumber(Math.floor(Math.random()*(99))+1)+'.png">')
-                        if(i == 5){
-                            $("body").append('<div class="bubble bubble_'+(bubble_array.length)+'"><img src="img/balloon/img_'+(Math.floor(Math.random()*(24))+1)+'.png">')
-                            bubble_array.push([0,popup_array.length-1,false])
-                        }
+                        $("body").append('<div class="wrap keycode_'+keycode+' ah_'+(popup_array.length-1)+'"><img src="newgem/Layer_'+(Math.floor(Math.random()*(54))+1)+'.png">')
                     }
                     // }
             }
@@ -226,10 +206,7 @@ function formatNumber(num) {
                             bubble_array[i][0] = bubble_array[i][0]-0.01
                         }else{
                             $('.bubble_'+i).css({'opacity':0})
-                            // $('.bubble_'+i).remove();
-                        console.log('!!')
                         }
-                        console.log(bubble_array[i][0])
                     }
                         // if(bubble_array[i][0] <= 0 && bubble_array[i][2]){
                         //     console.log('!')
@@ -247,18 +224,24 @@ function formatNumber(num) {
             }
             $(document).on('keydown', function(e) {
                 $('body').addClass('bg')
-
                 if (laughList.length < maxLaughs) {
-                    // Create a new audio element
-                    const laughAudio = new Audio(laughSound);
-                    
-                    // Add the audio element to the array
+                    // Randomly select a subarray
+                    const subarray = soundarray[Math.floor(Math.random() * soundarray.length)];
+
+                    // Randomly select an audio file from the chosen subarray
+                    const randomSound = subarray[Math.floor(Math.random() * subarray.length)];
+
+                    // Create a new Audio object with the selected sound
+                    const laughAudio = new Audio(`sound/${randomSound}`);
+                    laughAudio.preload = 'auto'; // Preload the audio
                     laughList.push(laughAudio);
-                    
-                    // Play the audio
-                    laughAudio.play();
-                    
-                    // Add an event listener to remove it from the array when it ends
+
+                    // Play the audio and handle potential playback errors
+                    laughAudio.play().catch((error) => {
+                        console.error('Audio playback failed:', error);
+                    });
+
+                    // Remove the audio from the list once it finishes playing
                     laughAudio.addEventListener('ended', function () {
                         const index = laughList.indexOf(laughAudio);
                         if (index !== -1) {
@@ -266,6 +249,8 @@ function formatNumber(num) {
                         }
                     });
                 }
+
+
                 $('.shine').addClass('shine_on')
                 $('.shine').addClass('shine_'+(Math.floor(Math.random()*3)+1))
                 clearTimeout(timeout);
